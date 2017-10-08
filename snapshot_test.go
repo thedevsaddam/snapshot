@@ -8,7 +8,7 @@ import (
 type user struct {
 	Name, Email string
 	Phone       int
-	Created_at  time.Time
+	CreatedAt   time.Time
 }
 
 var userCollection *Collection

@@ -18,12 +18,14 @@ const (
 
 var mutexList = make(map[string]*sync.Mutex)
 
+// Collection describes a collection of key value pairs
 type Collection struct {
 	mutex sync.Mutex
 	dir   string
 	items []string
 }
 
+// New return a instance of collection
 func New(name string) (*Collection, error) {
 	if len(name) <= 0 {
 		return &Collection{}, errors.New("Collection name can not be empty!")
@@ -37,7 +39,7 @@ func New(name string) (*Collection, error) {
 	return &collection, os.MkdirAll(dir, 0755)
 }
 
-//save a new key with value in the collection
+//Put store a new key with value in the collection
 func (c *Collection) Put(key string, value interface{}) error {
 	if len(key) <= 0 {
 		return errors.New("Key can not be empty!")
@@ -55,7 +57,7 @@ func (c *Collection) Put(key string, value interface{}) error {
 	return err
 }
 
-//get a value from collection by key
+//Get retrieve a value from collection by key
 func (c *Collection) Get(key string, value interface{}) error {
 	if len(key) <= 0 {
 		return errors.New("Key can not be empty!")
@@ -76,7 +78,7 @@ func (c *Collection) Get(key string, value interface{}) error {
 	return err
 }
 
-//delete a key from collection
+//Remove delete a key from collection
 func (c *Collection) Remove(key string) error {
 	if len(key) <= 0 {
 		return errors.New("Key can not be empty!")
@@ -92,7 +94,7 @@ func (c *Collection) Remove(key string) error {
 	}
 }
 
-//delete a collection
+//Flush delete a collection with its value
 func (c *Collection) Flush() error {
 	if _, err := os.Stat(c.dir); err == nil {
 		os.RemoveAll(c.dir)
@@ -101,7 +103,7 @@ func (c *Collection) Flush() error {
 	return nil
 }
 
-//check a key exist in the collection
+//Has check a key exist in the collection
 func (c *Collection) Has(key string) bool {
 	if len(key) <= 0 {
 		return false
@@ -114,7 +116,7 @@ func (c *Collection) Has(key string) bool {
 	}
 }
 
-//get item names list in collection
+//List fetch all items key in collection
 func (c *Collection) List() ([]string, error) {
 	var items []string
 	files, err := ioutil.ReadDir(c.dir)
@@ -129,7 +131,7 @@ func (c *Collection) List() ([]string, error) {
 	return items, err
 }
 
-//get total item count
+//TotalItem return total item count
 func (c *Collection) TotalItem() int {
 	list, _ := c.List()
 	return len(list)
