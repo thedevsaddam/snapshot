@@ -11,7 +11,7 @@ Robust, Persistent, Key-Value (KV) store purely written in Golang
 
 ### Installation
 ```bash
-go get github.com/thedevsaddam/snapshot
+$ go get github.com/thedevsaddam/snapshot
 ```
 
 ### Usage
@@ -68,10 +68,6 @@ func main() {
 
 ```
 
-### Roadmap
-- [ ] Caching
-- [ ] Logger
-- [ ] Code review
 
 ### License
 The **snapshot** is a open-source software licensed under the [MIT License](LICENSE.md).
