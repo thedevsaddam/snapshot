@@ -89,9 +89,8 @@ func (c *Collection) Remove(key string) error {
 	defer m.Unlock()
 	if c.Has(key) {
 		return os.Remove(path)
-	} else {
-		return fmt.Errorf("Key %s does not exist!", key)
 	}
+	return fmt.Errorf("Key %s does not exist!", key)
 }
 
 //Flush delete a collection with its value
@@ -111,9 +110,8 @@ func (c *Collection) Has(key string) bool {
 	path := filepath.Join(c.dir, key+extension)
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 //List fetch all items key in collection
