@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/thedevsaddam/snapshot.svg?branch=master)](https://travis-ci.org/thedevsaddam/snapshot)
 ![Project status](https://img.shields.io/badge/version-0.1-green.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/thedevsaddam/snapshot)](https://goreportcard.com/report/github.com/thedevsaddam/snapshot)
-[![GoDoc](https://godoc.org/github.com/thedevsaddam/govalidator?status.svg)](https://godoc.org/github.com/thedevsaddamsnapshot)
+[![GoDoc](https://godoc.org/github.com/thedevsaddam/govalidator?status.svg)](https://godoc.org/github.com/thedevsaddam/snapshot)
 ![License](https://img.shields.io/dub/l/vibe-d.svg)
 
 Robust, Persistent, Key-Value (KV) store purely written in Golang
