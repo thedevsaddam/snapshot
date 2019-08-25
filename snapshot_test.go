@@ -88,7 +88,7 @@ func BenchmarkCollection_Get(b *testing.B) {
 	}
 }
 
-func BenchmarkCollection_Concurence(b *testing.B) {
+func BenchmarkCollection_Concurency(b *testing.B) {
 	group := &sync.WaitGroup{}
 	group.Add(2)
 	go func() {
@@ -110,30 +110,30 @@ func BenchmarkCollection_Concurence(b *testing.B) {
 
 func BenchmarkCollection_Has(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		go userCollection.Has("john")
+		userCollection.Has("john")
 	}
 }
 
 func BenchmarkCollection_List(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		go userCollection.List()
+		userCollection.List()
 	}
 }
 
 func BenchmarkCollection_TotalItem(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		go userCollection.TotalItem()
+		userCollection.TotalItem()
 	}
 }
 
 func BenchmarkCollection_Remove(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		go userCollection.Remove("john")
+		userCollection.Remove("john")
 	}
 }
 
 func BenchmarkCollection_Flush(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		go userCollection.Flush()
+		userCollection.Flush()
 	}
 }

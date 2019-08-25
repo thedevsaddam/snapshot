@@ -146,7 +146,6 @@ func (c *Collection) getPathMutex(path string) *sync.RWMutex {
 		if m == nil {
 			m = &sync.RWMutex{}
 		}
-		// todo 多线程写map是否有问题
 		mutexList[path] = m
 	}
 	return m
