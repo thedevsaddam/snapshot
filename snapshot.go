@@ -16,7 +16,7 @@ const (
 	prefix    = "_sc_"
 )
 
-var mutexList = make(map[string]*sync.Mutex)
+var mutexList = make(map[string]*sync.RWMutex)
 
 // Collection describes a collection of key value pairs
 type Collection struct {
@@ -28,7 +28,7 @@ type Collection struct {
 // New return a instance of collection
 func New(name string) (*Collection, error) {
 	if len(name) <= 0 {
-		return &Collection{}, errors.New("Collection name can not be empty!")
+		return &Collection{}, errors.New("Collection name can not be empty")
 	}
 	//make file path correct
 	dir := prefix + filepath.Clean(name)
@@ -42,10 +42,11 @@ func New(name string) (*Collection, error) {
 //Put store a new key with value in the collection
 func (c *Collection) Put(key string, value interface{}) error {
 	if len(key) <= 0 {
-		return errors.New("Key can not be empty!")
+		return errors.New("Key can not be empty")
 	}
 	path := filepath.Join(c.dir, key+extension)
-	m := c.getMutex(path)
+	// need get read lock and write lock
+	m := c.getPathMutex(path)
 	m.Lock()
 	defer m.Unlock()
 	file, err := os.Create(path)
@@ -60,14 +61,14 @@ func (c *Collection) Put(key string, value interface{}) error {
 //Get retrieve a value from collection by key
 func (c *Collection) Get(key string, value interface{}) error {
 	if len(key) <= 0 {
-		return errors.New("Key can not be empty!")
+		return errors.New("Key can not be empty")
 	}
 	path := filepath.Join(c.dir, key+extension)
-	m := c.getMutex(path)
-	m.Lock()
-	defer m.Unlock()
+	m := c.getPathMutex(path)
+	m.RLock()
+	defer m.RUnlock()
 	if !c.Has(key) {
-		return fmt.Errorf("Key %s does not exist!", key)
+		return fmt.Errorf("Key %s does not exist", key)
 	}
 	file, err := os.Open(path)
 	defer file.Close()
@@ -81,16 +82,16 @@ func (c *Collection) Get(key string, value interface{}) error {
 //Remove delete a key from collection
 func (c *Collection) Remove(key string) error {
 	if len(key) <= 0 {
-		return errors.New("Key can not be empty!")
+		return errors.New("Key can not be empty")
 	}
 	path := filepath.Join(c.dir, key+extension)
-	m := c.getMutex(path)
+	m := c.getPathMutex(path)
 	m.Lock()
 	defer m.Unlock()
 	if c.Has(key) {
 		return os.Remove(path)
 	}
-	return fmt.Errorf("Key %s does not exist!", key)
+	return fmt.Errorf("Key %s does not exist", key)
 }
 
 //Flush delete a collection with its value
@@ -135,14 +136,16 @@ func (c *Collection) TotalItem() int {
 	return len(list)
 }
 
-//populate a package level mutex list
+// populate a package level mutex list
 // with key of full path of an item
-func (c *Collection) getMutex(path string) *sync.Mutex {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+func (c *Collection) getPathMutex(path string) *sync.RWMutex {
 	m, ok := mutexList[path]
 	if !ok {
-		m = &sync.Mutex{}
+		c.mutex.Lock()
+		defer c.mutex.Unlock()
+		if m == nil {
+			m = &sync.RWMutex{}
+		}
 		mutexList[path] = m
 	}
 	return m

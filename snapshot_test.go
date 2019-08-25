@@ -1,6 +1,7 @@
 package snapshot
 
 import (
+	"sync"
 	"testing"
 	"time"
 )
@@ -76,15 +77,35 @@ func TestCollection_Flush(t *testing.T) {
 func BenchmarkCollection_Put(b *testing.B) {
 	john := user{"John Doe", "john.doe@mail.com", 9898787, time.Now()}
 	for n := 0; n < b.N; n++ {
-		userCollection.Put("john", &john)
+		go userCollection.Put("john", &john)
 	}
 }
 
 func BenchmarkCollection_Get(b *testing.B) {
 	john := user{}
 	for n := 0; n < b.N; n++ {
-		userCollection.Get("john", &john)
+		go userCollection.Get("john", &john)
 	}
+}
+
+func BenchmarkCollection_Concurency(b *testing.B) {
+	group := &sync.WaitGroup{}
+	group.Add(2)
+	go func() {
+		for i := 0; i < b.N; i++ {
+			john := user{"John Doe", "john.doe@mail.com", 9898787, time.Now()}
+			userCollection.Put("john", john)
+		}
+		group.Done()
+	}()
+	go func() {
+		for i := 0; i < b.N; i++ {
+			john := user{}
+			userCollection.Get("john", john)
+		}
+		group.Done()
+	}()
+	group.Wait()
 }
 
 func BenchmarkCollection_Has(b *testing.B) {
